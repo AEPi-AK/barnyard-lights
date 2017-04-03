@@ -99,7 +99,7 @@ if __name__ == '__main__':
 	strip.begin()
 	clear(strip)
 	while True:
-		r = requests.get('http://128.237.92.240:3000/gamestate')
+		r = requests.get('http://barnyard-nuc.local/gamestate')
 		gameState = r.json()
 		if gameState["currentPhase"] == "GameInProgress":
 			if gameState["location"] == "Desert":
