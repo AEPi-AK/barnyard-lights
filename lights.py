@@ -107,4 +107,6 @@ if __name__ == '__main__':
 			elif gameState["location"] == "Tundra":
 				color = Color(0,0,255)
 			timer(strip,float(gameState["phaseTime"]),float(gameState["timeSincePhaseStart"]),color)
+		else:
+			clear(strip)
 		time.sleep(10.0/1000)
