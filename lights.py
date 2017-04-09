@@ -34,7 +34,7 @@ def player1Join(strip):
 			return
 		for q in range(3):
 			for i in range(0, strip.numPixels() / 2, 3):
-				strip.setPixelColor(i+q, Color(300,200,100))
+				strip.setPixelColor(i+q, Color(200,60,0))
 			strip.show()
 			time.sleep(50/1000.0)
 			for i in range(0, strip.numPixels() / 2, 3):
@@ -64,7 +64,7 @@ def player1And2Join(strip):
 			return
 		for q in range(3):
 			for i in range(0, strip.numPixels() / 2, 3):
-				strip.setPixelColor(i+q, Color(300,200,100))
+				strip.setPixelColor(i+q, Color(200,60,0))
 			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
 				strip.setPixelColor(i-q, Color(300,200,100))
 			strip.show()
