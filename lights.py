@@ -14,7 +14,7 @@ LED_COUNT      = 102      # Number of LED pixels.
 LED_PIN        = 12      # GPIO pin connected to the pixels (must support PWM!).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
-LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
+LED_BRIGHTNESS = 100     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 
 
@@ -25,6 +25,54 @@ def colorWipe(strip, color, wait_ms=50):
 		strip.setPixelColor(i, color)
 		strip.show()
 		time.sleep(wait_ms/1000.0)
+
+def player1Join(strip):
+	while True:
+		r = requests.get('http://barnyard-nuc.local/gamestate')
+		gameState = r.json()
+		if gameState["currentPhase"] != "GameJoining" or gameState["player2"]["joined"] == "True":
+			return
+		for q in range(3):
+			for i in range(0, strip.numPixels() / 2, 3):
+				strip.setPixelColor(i+q, Color(300,200,100))
+			strip.show()
+			time.sleep(50/1000.0)
+			for i in range(0, strip.numPixels() / 2, 3):
+				strip.setPixelColor(i+q, 0)
+
+
+def player2Join(strip):
+	while True:
+		r = requests.get('http://barnyard-nuc.local/gamestate')
+		gameState = r.json()
+		if gameState["currentPhase"] != "GameJoining" or gameState["player1"]["joined"] == "True":
+			return
+		for q in range(3):
+			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
+				strip.setPixelColor(i-q, Color(300,200,100))
+			strip.show()
+			time.sleep(50/1000.0)
+			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
+				strip.setPixelColor(i-q, 0)
+
+
+def player1And2Join(strip):
+	while True:
+		r = requests.get('http://barnyard-nuc.local/gamestate')
+		gameState = r.json()
+		if gameState["currentPhase"] != "GameJoining":
+			return
+		for q in range(3):
+			for i in range(0, strip.numPixels() / 2, 3):
+				strip.setPixelColor(i+q, Color(300,200,100))
+			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
+				strip.setPixelColor(i-q, Color(300,200,100))
+			strip.show()
+			time.sleep(50/1000.0)
+			for i in range(0, strip.numPixels() / 2, 3):
+				strip.setPixelColor(i+q, 0)
+			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
+				strip.setPixelColor(i-q, 0)
 
 def theaterChase(strip, color, wait_ms=50, iterations=10):
 	"""Movie theater light style chaser animation."""
@@ -101,7 +149,17 @@ if __name__ == '__main__':
 	while True:
 		r = requests.get('http://barnyard-nuc.local/gamestate')
 		gameState = r.json()
-		if gameState["currentPhase"] == "GameInProgress":
+		P1 = gameState["player1"]
+		P2 = gameState["player2"]
+		if gameState["currentPhase"] == "GameJoining":
+			clear(strip)
+			if P1["joined"] == "True" and P2["joined"] == "True":
+				player1And2Join(strip)
+			elif P1["joined"] == "True":
+				player1Join(strip)
+			elif P2["joined"] == "True":
+				player2Join(strip)
+		elif gameState["currentPhase"] == "GameInProgress":
 			if gameState["location"] == "Desert":
 				color = Color(255,255,0)
 			elif gameState["location"] == "Tundra":
