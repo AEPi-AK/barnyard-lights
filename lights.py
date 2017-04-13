@@ -153,7 +153,7 @@ def theaterChaseRainbow(strip, wait_ms=50):
 			for i in range(0, strip.numPixels(), 3):
 				strip.setPixelColor(i+q, 0)
 
-def timer(strip, start, current, color):
+def timer(strip, start, current):
 	ratio = strip.numPixels() / (2.0 * start)
 	for i in range(strip.numPixels()):
 		if i > strip.numPixels() - (current * ratio):
@@ -161,7 +161,8 @@ def timer(strip, start, current, color):
 		elif i < current * ratio:
 			strip.setPixelColor(i,Color(0,0,0))
 		else:
-			strip.setPixelColor(i,color)
+			otherRatio = current / start
+			strip.setPixelColor(i,Color(int(255*otherRatio),int(255-(255*otherRatio)),0))
 	strip.show()
 
 def clear(strip):
@@ -193,11 +194,11 @@ if __name__ == '__main__':
 			elif P2["joined"] == "True":
 				player2Join(strip)
 		elif gameState["currentPhase"] == "GameInProgress":
-			if gameState["location"] == "Desert":
-				color = Color(255,255,0)
-			elif gameState["location"] == "Tundra":
-				color = Color(0,0,255)
-			timer(strip,float(gameState["phaseTime"]),float(gameState["timeSincePhaseStart"]),color)
+			# if gameState["location"] == "Desert":
+			# 	color = Color(255,255,0)
+			# elif gameState["location"] == "Tundra":
+			# 	color = Color(0,0,255)
+			timer(strip,float(gameState["phaseTime"]),float(gameState["timeSincePhaseStart"]))
 		elif gameState["currentPhase"] == "GameOver":
 			clear(strip)
 			if gameState["winner"] == "Player1":
