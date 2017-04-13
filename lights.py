@@ -74,6 +74,36 @@ def player1And2Join(strip):
 			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
 				strip.setPixelColor(i-q, 0)
 
+
+def player1Win(strip):
+	while True:
+		r = requests.get('http://barnyard-nuc.local/gamestate')
+		gameState = r.json()
+		if gameState["currentPhase"] != "GameOver":
+			return
+		for q in range(3):
+			for i in range(0, strip.numPixels() / 2, 3):
+				strip.setPixelColor(i+q, Color(200,60,0))
+			strip.show()
+			time.sleep(50/1000.0)
+			for i in range(0, strip.numPixels() / 2, 3):
+				strip.setPixelColor(i+q, 0)
+
+
+def player2Win(strip):
+	while True:
+		r = requests.get('http://barnyard-nuc.local/gamestate')
+		gameState = r.json()
+		if gameState["currentPhase"] != "GameOver":
+			return
+		for q in range(3):
+			for i in range(0, strip.numPixels() / 2, 3):
+				strip.setPixelColor(i+q, Color(200,60,0))
+			strip.show()
+			time.sleep(50/1000.0)
+			for i in range(0, strip.numPixels() / 2, 3):
+				strip.setPixelColor(i+q, 0)
+
 def theaterChase(strip, color, wait_ms=50, iterations=10):
 	"""Movie theater light style chaser animation."""
 	for j in range(iterations):
@@ -151,6 +181,9 @@ if __name__ == '__main__':
 		gameState = r.json()
 		P1 = gameState["player1"]
 		P2 = gameState["player2"]
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
+		strip.show()
 		if gameState["currentPhase"] == "GameJoining":
 			clear(strip)
 			if P1["joined"] == "True" and P2["joined"] == "True":
@@ -165,6 +198,12 @@ if __name__ == '__main__':
 			elif gameState["location"] == "Tundra":
 				color = Color(0,0,255)
 			timer(strip,float(gameState["phaseTime"]),float(gameState["timeSincePhaseStart"]),color)
+		elif gameState["currentPhase"] == "GameOver":
+			clear(strip)
+			if gameState["winner"] == "Player1":
+				player1Win(strip)
+			elif gameState["winner"] == "Player2":
+				player2Win(strip)
 		else:
 			clear(strip)
 		time.sleep(10.0/1000)
