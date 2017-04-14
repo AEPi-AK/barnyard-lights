@@ -136,20 +136,38 @@ def wheel(pos):
 		pos -= 170
 		return Color(0, pos * 3, 255 - pos * 3)
 
-def rainbow(strip, wait_ms=20, iterations=1):
+
+def rainbow(strip):
 	"""Draw rainbow that fades across all pixels at once."""
-	for j in range(256*iterations):
+	j = 0
+	while True:
+		r = requests.get('http://barnyard-nuc.local/gamestate')
+		gameState = r.json()
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
+		if gameState["currentPhase"] != "GameBiomeSelection":
+			return
 		for i in range(strip.numPixels()):
 			strip.setPixelColor(i, wheel((i+j) & 255))
 		strip.show()
-		time.sleep(wait_ms/1000.0)
+		j += 1
+		time.sleep(5/1000.0)
 
-def rainbowCycle(strip, wait_ms=20, iterations=5):
+def rainbowCycle(strip, wait_ms=1, iterations=5):
 	"""Draw rainbow that uniformly distributes itself across all pixels."""
-	for j in range(256*iterations):
+	j = 0
+	while True:
+		if j % 50 == 0:
+			r = requests.get('http://barnyard-nuc.local/gamestate')
+			gameState = r.json()
+			LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+			strip.setBrightness(LED_BRIGHTNESS)
+			if gameState["currentPhase"] != "GameBiomeSelection":
+				return
 		for i in range(strip.numPixels()):
 			strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255))
 		strip.show()
+		j += 1
 		time.sleep(wait_ms/1000.0)
 
 def theaterChaseRainbow(strip, wait_ms=50):
@@ -174,6 +192,24 @@ def timer(strip, start, current):
 			otherRatio = current / start
 			strip.setPixelColor(i,Color(int(255*otherRatio),int(255-(255*otherRatio)),0))
 	strip.show()
+
+def timeUp(strip):
+	while True:
+		r = requests.get('http://barnyard-nuc.local/gamestate')
+		gameState = r.json()
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
+		strip.show()
+		if gameState["currentPhase"] != "GameTimeUp":
+			return
+		for i in range(strip.numPixels()):
+			strip.setPixelColor(i,Color(255,0,0))
+		strip.show()
+		time.sleep(250/1000.0)
+		for i in range(strip.numPixels()):
+			strip.setPixelColor(i,0)
+		strip.show()
+		time.sleep(250/1000.0)
 
 def clear(strip):
 	for i in range(strip.numPixels()):
@@ -203,13 +239,19 @@ if __name__ == '__main__':
 				player1Join(strip)
 			elif P2["joined"] == "True":
 				player2Join(strip)
+		elif gameState["currentPhase"] == "GameBiomeSelection":
+			clear(strip)
+			rainbowCycle(strip,1)
 		elif gameState["currentPhase"] == "GameInProgress":
 			# if gameState["location"] == "Desert":
 			# 	color = Color(255,255,0)
 			# elif gameState["location"] == "Tundra":
 			# 	color = Color(0,0,255)
 			timer(strip,float(gameState["phaseTime"]),float(gameState["timeSincePhaseStart"]))
-		elif gameState["currentPhase"] == "GameOver":
+		elif gameState["currentPhase"] == "GameTimeUp":
+			clear(strip)
+			timeUp(strip)
+		elif gameState["currentPhase"] == "GameWinner":
 			clear(strip)
 			if gameState["winner"] == "Player1":
 				player1Win(strip)
