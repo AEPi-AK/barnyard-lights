@@ -30,11 +30,13 @@ def player1Join(strip):
 	while True:
 		r = requests.get('http://barnyard-nuc.local/gamestate')
 		gameState = r.json()
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
 		if gameState["currentPhase"] != "GameJoining" or gameState["player2"]["joined"] == "True":
 			return
 		for q in range(3):
 			for i in range(0, strip.numPixels() / 2, 3):
-				strip.setPixelColor(i+q, Color(200,60,0))
+				strip.setPixelColor(i+q, Color(160,160,160))
 			strip.show()
 			time.sleep(50/1000.0)
 			for i in range(0, strip.numPixels() / 2, 3):
@@ -45,11 +47,13 @@ def player2Join(strip):
 	while True:
 		r = requests.get('http://barnyard-nuc.local/gamestate')
 		gameState = r.json()
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
 		if gameState["currentPhase"] != "GameJoining" or gameState["player1"]["joined"] == "True":
 			return
 		for q in range(3):
 			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
-				strip.setPixelColor(i-q, Color(300,200,100))
+				strip.setPixelColor(i-q, Color(160,160,160))
 			strip.show()
 			time.sleep(50/1000.0)
 			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
@@ -60,13 +64,15 @@ def player1And2Join(strip):
 	while True:
 		r = requests.get('http://barnyard-nuc.local/gamestate')
 		gameState = r.json()
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
 		if gameState["currentPhase"] != "GameJoining":
 			return
 		for q in range(3):
 			for i in range(0, strip.numPixels() / 2, 3):
-				strip.setPixelColor(i+q, Color(200,60,0))
+				strip.setPixelColor(i+q, Color(160,160,160))
 			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
-				strip.setPixelColor(i-q, Color(300,200,100))
+				strip.setPixelColor(i-q, Color(160,160,160))
 			strip.show()
 			time.sleep(50/1000.0)
 			for i in range(0, strip.numPixels() / 2, 3):
@@ -79,6 +85,8 @@ def player1Win(strip):
 	while True:
 		r = requests.get('http://barnyard-nuc.local/gamestate')
 		gameState = r.json()
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
 		if gameState["currentPhase"] != "GameOver":
 			return
 		for q in range(3):
@@ -94,6 +102,8 @@ def player2Win(strip):
 	while True:
 		r = requests.get('http://barnyard-nuc.local/gamestate')
 		gameState = r.json()
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
 		if gameState["currentPhase"] != "GameOver":
 			return
 		for q in range(3):
