@@ -8,6 +8,8 @@ from pprint import pprint
 from neopixel import *
 import sys
 import requests
+import colorsys
+
 
 # LED strip configuration:
 LED_COUNT      = 102      # Number of LED pixels.
@@ -190,7 +192,9 @@ def timer(strip, start, current):
 			strip.setPixelColor(i,Color(0,0,0))
 		else:
 			otherRatio = current / start
-			strip.setPixelColor(i,Color(int(255*otherRatio),int(255-(255*otherRatio)),0))
+			hue = (1-otherRatio)*.33
+			(r, g, b) = colorsys.hsv_to_rgb(hue, 1, 1)
+			strip.setPixelColor(i,Color(int(r*255),int(g*255),int(b*255)))
 	strip.show()
 
 def timeUp(strip):
@@ -210,6 +214,22 @@ def timeUp(strip):
 			strip.setPixelColor(i,0)
 		strip.show()
 		time.sleep(250/1000.0)
+
+def sadReactsOnly(strip):
+	j = 0
+	while True:
+		r = requests.get('http://barnyard-nuc.local/gamestate')
+		gameState = r.json()
+		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+		strip.setBrightness(LED_BRIGHTNESS)
+		strip.show()
+		if gameState["currentPhase"] != "GameWinner":
+			return
+		for i in range(strip.numPixels()):
+			strip.setPixelColor(i, Color(0,0,max(255-(j*5),0)))
+		strip.show()
+		j += 1
+		time.sleep(100/1000.0)
 
 def clear(strip):
 	for i in range(strip.numPixels()):
@@ -257,6 +277,8 @@ if __name__ == '__main__':
 				player1Win(strip)
 			elif gameState["winner"] == "Player2":
 				player2Win(strip)
+			else:
+				sadReactsOnly(strip)
 		else:
 			clear(strip)
 		time.sleep(10.0/1000)
