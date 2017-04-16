@@ -281,4 +281,4 @@ if __name__ == '__main__':
 				sadReactsOnly(strip)
 		else:
 			clear(strip)
-		time.sleep(10.0/1000)
+		time.sleep(50.0/1000)
