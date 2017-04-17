@@ -164,7 +164,7 @@ def rainbowCycle(strip, wait_ms=1, iterations=5):
 			gameState = r.json()
 			LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
 			strip.setBrightness(LED_BRIGHTNESS)
-			if gameState["currentPhase"] != "GameBiomeSelection":
+			if gameState["currentPhase"] != "GameBiomePicking":
 				return
 		for i in range(strip.numPixels()):
 			strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255))
@@ -253,15 +253,28 @@ if __name__ == '__main__':
 		strip.show()
 		if gameState["currentPhase"] == "GameJoining":
 			clear(strip)
-			if P1["joined"] == "True" and P2["joined"] == "True":
+			if P1["joined"] == True and P2["joined"] == True:
 				player1And2Join(strip)
-			elif P1["joined"] == "True":
+			elif P1["joined"] == True:
 				player1Join(strip)
-			elif P2["joined"] == "True":
+			elif P2["joined"] == True:
 				player2Join(strip)
-		elif gameState["currentPhase"] == "GameBiomeSelection":
+		elif gameState["currentPhase"] == "GameBiomePicking":
 			clear(strip)
 			rainbowCycle(strip,1)
+		elif gameState["currentPhase"] == "GameBiomeSelection":
+			if gameState["location"] == "Desert":
+				color = Color(255,0,0)
+			elif gameState["location"] == "Arctic":
+				color = Color(0,0,255)
+			elif gameState["location"] == "Grassland":
+				color = Color(255,255,0)
+			else:
+				# rainforest
+				color = Color(0,255,0)
+			for i in range(strip.numPixels()):
+				strip.setPixelColor(i,color)
+			strip.show()
 		elif gameState["currentPhase"] == "GameInProgress":
 			# if gameState["location"] == "Desert":
 			# 	color = Color(255,255,0)
