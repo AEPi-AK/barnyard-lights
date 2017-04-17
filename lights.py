@@ -34,7 +34,7 @@ def player1Join(strip):
 		gameState = r.json()
 		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
 		strip.setBrightness(LED_BRIGHTNESS)
-		if gameState["currentPhase"] != "GameJoining" or gameState["player2"]["joined"] == "True":
+		if gameState["currentPhase"] != "GameJoining" or gameState["player2"]["joined"] == True:
 			return
 		for q in range(3):
 			for i in range(0, strip.numPixels() / 2, 3):
@@ -51,7 +51,7 @@ def player2Join(strip):
 		gameState = r.json()
 		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
 		strip.setBrightness(LED_BRIGHTNESS)
-		if gameState["currentPhase"] != "GameJoining" or gameState["player1"]["joined"] == "True":
+		if gameState["currentPhase"] != "GameJoining" or gameState["player1"]["joined"] == True:
 			return
 		for q in range(3):
 			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
