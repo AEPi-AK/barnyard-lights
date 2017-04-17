@@ -76,7 +76,7 @@ def theaterChaseRainbow(strip, wait_ms=5):
 
 def clear(strip):
 	for i in range(strip.numPixels()):
-		strip.setPixelColor(i, Color(0,0,0))
+		strip.setPixelColor(i, 0)
 	strip.show()
 
 # Main program logic follows:
