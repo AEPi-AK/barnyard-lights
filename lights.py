@@ -72,39 +72,43 @@ def player1And2Join(strip):
 			for i in range(strip.numPixels(), strip.numPixels() / 2, -3):
 				strip.setPixelColor(i-q, 0)
 
-
 def player1Win(strip):
+	j = 0
+	k = 0
 	while True:
-		r = requests.get('http://barnyard-nuc.local/gamestate')
-		gameState = r.json()
-		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
-		strip.setBrightness(LED_BRIGHTNESS)
-		if gameState["currentPhase"] != "GameWinner":
-			return
-		for q in range(3):
-			for i in range(0, strip.numPixels() / 2, 3):
-				strip.setPixelColor(i+q, Color(200,60,0))
-			strip.show()
-			time.sleep(50/1000.0)
-			for i in range(0, strip.numPixels() / 2, 3):
-				strip.setPixelColor(i+q, 0)
-
+		if k % 10 == 0:
+			r = requests.get('http://barnyard-nuc.local/gamestate')
+			gameState = r.json()
+			LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+			strip.setBrightness(LED_BRIGHTNESS)
+			if gameState["currentPhase"] != "GameWinner":
+				return
+		for i in range(0, strip.numPixels() / 2, 1):
+			strip.setPixelColor(i, wheel((int((strip.numPixels() / 2 - i) * 256 / strip.numPixels() / 2) + j) & 255))
+			# strip.setPixelColor(i, Color(200,60,0))
+		strip.show()
+		j += 5
+		k += 1
+		time.sleep(25/1000.0)
 
 def player2Win(strip):
+	j = 0
+	k = 0
 	while True:
-		r = requests.get('http://barnyard-nuc.local/gamestate')
-		gameState = r.json()
-		LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
-		strip.setBrightness(LED_BRIGHTNESS)
-		if gameState["currentPhase"] != "GameWinner":
-			return
-		for q in range(3):
-			for i in range(strip.numPixels(), strip.numPixels() / 2 + 1, -3):
-				strip.setPixelColor(i+q, Color(200,60,0))
-			strip.show()
-			time.sleep(50/1000.0)
-			for i in range(strip.numPixels(), strip.numPixels() / 2 + 1, -3):
-				strip.setPixelColor(i+q, 0)
+		if k % 10 == 0:
+			r = requests.get('http://barnyard-nuc.local/gamestate')
+			gameState = r.json()
+			LED_BRIGHTNESS = int(gameState["settings"]["brightness"])
+			strip.setBrightness(LED_BRIGHTNESS)
+			if gameState["currentPhase"] != "GameWinner":
+				return
+		for i in range(strip.numPixels(), strip.numPixels() / 2 + 1, -1):
+			strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels() / 2) + j) & 255))
+			# strip.setPixelColor(i, Color(200,60,0))
+		strip.show()
+		j += 5
+		k += 1
+		time.sleep(25/1000.0)
 
 def wheel(pos):
 	if pos < 85:
