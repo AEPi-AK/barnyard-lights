@@ -12,7 +12,7 @@ import colorsys
 
 
 # LED strip configuration:
-LED_COUNT      = 100      # Number of LED pixels.
+LED_COUNT      = 105      # Number of LED pixels.
 LED_PIN        = 12      # GPIO pin connected to the pixels (must support PWM!).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
@@ -109,11 +109,11 @@ def player2Win(strip):
 		if gameState["currentPhase"] != "GameWinner":
 			return
 		for q in range(3):
-			for i in range(0, strip.numPixels() / 2, 3):
+			for i in range(strip.numPixels() / 2 + 1, strip.numPixels(), 3):
 				strip.setPixelColor(i+q, Color(200,60,0))
 			strip.show()
 			time.sleep(50/1000.0)
-			for i in range(0, strip.numPixels() / 2, 3):
+			for i in range(strip.numPixels() / 2 + 1, strip.numPixels(), 3):
 				strip.setPixelColor(i+q, 0)
 
 def theaterChase(strip, color, wait_ms=50, iterations=10):
