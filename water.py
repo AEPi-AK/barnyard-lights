@@ -18,7 +18,7 @@ if __name__ == '__main__':
   strip.begin()
   j = 0
   speed = 100 # <--Speed of the animation, in milliseconds.
-  size = 4 # <--Size of animation, in number of lights. Should be less than the number of lights.
+  size = 4 # <--Size of animation, in number of lights. Should be less than the total number of lights.
   while True:
     strip.setPixelColor((j - 1) % strip.numPixels(),0)
     for i in range(j % strip.numPixels(), (j + size) % strip.numPixels()):
