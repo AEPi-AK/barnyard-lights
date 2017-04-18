@@ -99,11 +99,11 @@ def player2Win(strip):
 		if gameState["currentPhase"] != "GameWinner":
 			return
 		for q in range(3):
-			for i in range(strip.numPixels() / 2 + 1, strip.numPixels(), 3):
+			for i in range(strip.numPixels(), strip.numPixels() / 2 + 1, -3):
 				strip.setPixelColor(i+q, Color(200,60,0))
 			strip.show()
 			time.sleep(50/1000.0)
-			for i in range(strip.numPixels() / 2 + 1, strip.numPixels(), 3):
+			for i in range(strip.numPixels(), strip.numPixels() / 2 + 1, -3):
 				strip.setPixelColor(i+q, 0)
 
 def wheel(pos):
